@@ -32,6 +32,6 @@ class Api::V1::WatchesController < ApplicationController
   private
 
   def watch_params
-    params.require(:watch).permit(:name, :description, :price, :image)
+    params.require(:watch).permit(:name, :description, :price, :image, :category_id)
   end
 end
