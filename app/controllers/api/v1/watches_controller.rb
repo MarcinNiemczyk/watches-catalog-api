@@ -1,6 +1,8 @@
 class Api::V1::WatchesController < ApplicationController
   def index
-    render json: Watch.all, each_serializer: Api::V1::WatchesSerializer
+    watches = get_filtered_watches
+
+    render json: watches, each_serializer: Api::V1::WatchesSerializer
   end
 
   def create
@@ -33,5 +35,18 @@ class Api::V1::WatchesController < ApplicationController
 
   def watch_params
     params.require(:watch).permit(:name, :description, :price, :image, :category_id)
+  end
+
+  private
+
+  def get_filtered_watches
+    if params[:category].present?
+      category = Category.find(params[:category])
+      watches = category ? category.watches : Watch.none
+    else
+      watches = Watch.all
+    end
+
+    Api::V1::WatchesFilter.new(params, watches).filter
   end
 end
